@@ -83,6 +83,11 @@ namespace NTWCardGame.Domain.Battle
                     // Los enemigos atacan al jugador en su turno
                      damage = currentEnemy.Attack(Player);
                     AddLogEntry($"{currentEnemy.Name} atacó al jugador y causó {damage} puntos de daño.");
+              
+
+                    Console.WriteLine( BattleLog.ToString() );
+                
+                
                 }
                 AdvanceTurn();
             }

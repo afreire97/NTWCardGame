@@ -76,7 +76,6 @@
 
     // Función para refrescar la UI después de cada acción
     function updateBattleUI(data) {
-
         document.getElementById('player-health').innerText = data.player.health;
         document.getElementById('player-mana').innerText = data.player.mana;
 
@@ -87,6 +86,7 @@
             }
         });
 
+        // Verificar si la batalla ha terminado
         if (data.isBattleOver) {
             document.getElementById('action-panel').style.display = 'none';
             document.getElementById('battle-result').style.display = 'block';
@@ -101,14 +101,24 @@
             return;
         }
 
-   
         document.getElementById('current-turn-info').innerText = data.turnInfo.currentCharacter.name;
-    
-        // Mostrar panel de acciones solo si es el turno del jugador
+
+       
+
+        // Si es el turno del jugador, mostramos el panel de acciones inmediatamente
         if (data.turnInfo.isPlayerTurn) {
             document.getElementById('action-panel').style.display = 'block';
-        } else {
+        }
+
+        // Si es el turno del enemigo, primero mostramos que es su turno y luego ejecutamos su acción tras 2 segundos
+        if (!data.turnInfo.isPlayerTurn) {
             document.getElementById('action-panel').style.display = 'none';
+            document.getElementById('current-turn-info').innerText = `Turno del enemigo: ${data.turnInfo.currentCharacter.name}`;
+
+            // Añadimos un retraso de 2 segundos antes de procesar el turno del enemigo
+            setTimeout(() => {
+                processEnemyTurn();
+            }, 2000);
         }
 
         // Actualizar el registro de combate

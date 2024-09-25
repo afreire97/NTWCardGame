@@ -46,8 +46,8 @@ namespace NTWCardGame.Domain.Cards.Player
 
         public override void TakeDamage(int damage)
         {
-            // Lógica específica para cuando el jugador recibe daño
-            // Por ejemplo, podría activar una habilidad de esquivar
+            base.TakeDamage(damage);
+
         }
 
         public override void UseItem(Items.Item item)

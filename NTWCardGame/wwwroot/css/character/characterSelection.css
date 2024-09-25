@@ -1,0 +1,15 @@
+﻿.character-image {
+    width: 22%;
+    height: auto;
+    margin: 10px;
+    cursor: pointer;
+}
+
+    .character-image.selected {
+        border: 4px solid blue;
+        box-sizing: border-box; /* Asegurarse que el borde no afecte al tamaño de la imagen */
+    }
+
+#startGameButton {
+    margin-top: 20px;
+}

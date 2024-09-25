@@ -1,4 +1,5 @@
 ﻿using NTWCardGame.Domain.Skill;
+using NTWCardGame.Models;
 namespace NTWCardGame.Domain.Cards.Player
   
 {
@@ -12,9 +13,14 @@ namespace NTWCardGame.Domain.Cards.Player
         public int BodyHeat { get; set; } // Para la simpatía
 
 
-        public int AttackDamage { get; set; }
+        public int AttackDmg { get; set; }
         public int Defense { get; set; }
         public double HitChance { get; set; }
+
+
+
+   
+
 
         public virtual void Attack(Character target, Skill.Skill skill = null)
         {
@@ -33,18 +39,21 @@ namespace NTWCardGame.Domain.Cards.Player
         protected virtual int CalculateDamage()
         {
             // Cálculo básico del daño
-            return Attack;
+            return this.AttackDmg; // This is the correct way to return the Attack value
         }
 
-        public abstract void TakeDamage(int damage);
-        public abstract void UseItem(Item item);
+
+        public virtual void TakeDamage(int damage)
+        {
+            Health -= damage;
+            Console.WriteLine("El personaje ha recibido " + damage + " de daño.");
+        }
+        public abstract void UseItem(Items.Item item);
         public virtual void LearnSkill(Skill.Skill skill)
         {
             // Comportamiento por defecto: Ignorar la habilidad
             Console.WriteLine("Este personaje no puede aprender habilidades.");
         }
-
-
 
     }
 }

@@ -17,6 +17,6 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Models\Cards\" />
+	  <Folder Include="Migrations\" />
 	</ItemGroup>
 </Project>

@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NTWCardGame.Models;
+using NTWCardGame.Models.Items;
 
 namespace NTWCardGame.Data
 {
@@ -9,6 +11,11 @@ namespace NTWCardGame.Data
             {
 
             }
-        }
+
+
+        public DbSet<CharacterEntity> Characters { get; set; }
+        public DbSet<ItemEntity> Items { get; set; }
+
     }
+}
 

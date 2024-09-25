@@ -10,8 +10,15 @@ namespace NTWCardGame.Domain.Cards.Player
     {
 
 
+        public List<Items.Item> Inventory { get; set; }
+        public Dictionary<Items.EquipmentSlot, Items.Equipment> Equipment { get; set; }
+        public Dictionary<Stat, int> Stats { get; set; }
+        public List<Skill.Skill> Skills { get; set; }
 
-        protected Player(CharacterEntity characterEntity)
+
+        public Player() { }
+
+        private Player(CharacterEntity characterEntity)
         {
             Id = characterEntity.Id;
             Name = characterEntity.Name;
@@ -21,11 +28,20 @@ namespace NTWCardGame.Domain.Cards.Player
             AttackDmg = characterEntity.AttackDmg;
             Defense = characterEntity.Defense;
             HitChance = characterEntity.HitChance;
+            Inventory = new List<Item>();
+            Equipment = new Dictionary<EquipmentSlot, Equipment>();
+            Stats = new Dictionary<Stat, int>();
+            Skills = new List<Skill.Skill>();
         }
-        public List<Items.Item> Inventory { get; set; }
-        public Dictionary<Items.EquipmentSlot, Items.Equipment> Equipment { get; set; }
-        public Dictionary<Stat, int> Stats { get; set; }
-        public List<Skill.Skill> Skills { get; set; }
+
+        public static Player FromEntity(CharacterEntity characterEntity)
+        {
+            if (characterEntity == null)
+            {
+                throw new ArgumentNullException(nameof(characterEntity));
+            }
+            return new Player(characterEntity);
+        }
 
         public override void TakeDamage(int damage)
         {

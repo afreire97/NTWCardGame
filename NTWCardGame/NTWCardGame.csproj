@@ -7,6 +7,7 @@
   </PropertyGroup>
 	<ItemGroup>
 		<!-- Dependencias de Entity Framework Core -->
+		<PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
 
@@ -15,6 +16,7 @@
 
 		<!-- Herramientas de diseño de EF Core, necesarias para el scaffolding de bases de datos -->
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.5" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Migrations\" />

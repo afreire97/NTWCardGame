@@ -19,6 +19,10 @@ namespace NTWCardGame.Domain.Cards.Player
             Defense = characterEntity.Defense;
             HitChance = characterEntity.HitChance;
         }
+        public Enemy()
+        {
+            
+        }
         public EnemyType Type { get; set; } // Agrega un tipo de enemigo (ej: guerrero, mago)
 
         public override void TakeDamage(int damage)

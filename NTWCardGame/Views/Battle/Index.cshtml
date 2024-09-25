@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewData["Title"] = "Battle";
+}
+
+<h1>Battle</h1>
+
+@model NTWCardGame.Domain.Battle.Battle
+
+@{
+    ViewData["Title"] = "Batalla";
+}
+
+<link rel="stylesheet" href="~/css/battle/battle.css" />
+
+<div id="battle-container">
+    <h1>Batalla contra los enemigos</h1>
+
+    <div id="player-info">
+        <h2>Jugador: @Model.Player.Name</h2>
+        <p>Salud: <span id="player-health">@Model.Player.Health</span></p>
+        <p>Mana: <span id="player-mana">@Model.Player.Mana</span></p>
+    </div>
+
+    <div id="enemy-info">
+        <h2>Enemigos</h2>
+        @foreach (var enemy in Model.Enemies)
+        {
+            <div class="enemy" id="enemy-@enemy.Id" data-id="@enemy.Id">
+                <img src="~/images/enemy-avatar.png" alt="Avatar del enemigo" class="enemy-avatar" />
+                <p>Nombre: @enemy.Name</p>
+                <p>Salud: <span class="enemy-health">@enemy.Health</span></p>
+            </div>
+        }
+    </div>
+
+    <div id="action-panel" style="display:none;">
+        <h3>Acciones del Jugador</h3>
+        <button class="action-button" onclick="playerAttack()">Atacar</button>
+        <!-- Puedes añadir más botones de acciones (habilidades, objetos, etc.) -->
+    </div>
+
+    <div id="turn-info">
+        <h3>Información del Turno</h3>
+        <p>Turno actual: <span id="current-turn-info"></span></p>
+    </div>
+</div>
+
+<script>
+    let battleData = {
+        playerId: '@Model.Player.Id',
+        enemies: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Enemies))
+    };
+
+    // Función para refrescar la UI después de cada acción
+    function updateBattleUI(data) {
+        document.getElementById('player-health').innerText = data.player.health;
+        document.getElementById('player-mana').innerText = data.player.mana;
+
+        data.enemies.forEach(enemy => {
+            let enemyElement = document.querySelector(`#enemy-${enemy.id} .enemy-health`);
+            if (enemyElement) {
+                enemyElement.innerText = enemy.health;
+            }
+        });
+
+        document.getElementById('current-turn-info').innerText = data.turnInfo.currentCharacter.name;
+
+        // Mostrar panel de acciones solo si es el turno del jugador
+        if (data.turnInfo.isPlayerTurn) {
+            document.getElementById('action-panel').style.display = 'block';
+        } else {
+            document.getElementById('action-panel').style.display = 'none';
+        }
+    }
+
+    // Inicia una acción de ataque por parte del jugador
+    function playerAttack() {
+        let targetId = battleData.enemies[0].id; // Atacamos al primer enemigo por ahora
+        postPlayerAction("attack", targetId);
+    }
+
+    // Envía la acción del jugador al servidor
+    function postPlayerAction(actionType, targetId) {
+        fetch('/Battle/PlayerAction', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                actionType: actionType,
+                targetId: targetId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            updateBattleUI(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Inicialización de la batalla (cargar el turno actual)
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch('/Battle/GetCurrentTurn')
+        .then(response => response.json())
+        .then(data => {
+            updateBattleUI(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>

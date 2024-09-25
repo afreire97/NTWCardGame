@@ -28,6 +28,7 @@ namespace NTWCardGame.Domain.Cards.Player
             AttackDmg = characterEntity.AttackDmg;
             Defense = characterEntity.Defense;
             HitChance = characterEntity.HitChance;
+            AvatarImage = characterEntity.AvatarImage;
             Inventory = new List<Item>();
             Equipment = new Dictionary<EquipmentSlot, Equipment>();
             Stats = new Dictionary<Stat, int>();

@@ -16,10 +16,10 @@ namespace NTWCardGame.Domain.Cards.Player
         public int AttackDmg { get; set; }
         public int Defense { get; set; }
         public double HitChance { get; set; }
+        public string AvatarImage { get; set; }
 
 
 
-   
 
 
         public virtual void Attack(Character target, Skill.Skill skill = null)
@@ -46,7 +46,7 @@ namespace NTWCardGame.Domain.Cards.Player
         public virtual void TakeDamage(int damage)
         {
             Health -= damage;
-            Console.WriteLine("El personaje ha recibido " + damage + " de daño.");
+            //Console.WriteLine("El personaje ha recibido " + damage + " de daño.");
         }
         public abstract void UseItem(Items.Item item);
         public virtual void LearnSkill(Skill.Skill skill)

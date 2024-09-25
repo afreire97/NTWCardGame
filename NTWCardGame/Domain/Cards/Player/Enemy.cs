@@ -7,7 +7,10 @@ namespace NTWCardGame.Domain.Cards.Player
     public class Enemy : Character
     {
 
-
+ public Enemy()
+        {
+            
+        }
         protected Enemy(CharacterEntity characterEntity)
         {
             Id = characterEntity.Id;
@@ -18,27 +21,16 @@ namespace NTWCardGame.Domain.Cards.Player
             AttackDmg = characterEntity.AttackDmg;
             Defense = characterEntity.Defense;
             HitChance = characterEntity.HitChance;
+            AvatarImage = characterEntity.AvatarImage;
         }
-        public Enemy()
-        {
-            
-        }
+       
         public EnemyType Type { get; set; } // Agrega un tipo de enemigo (ej: guerrero, mago)
 
         public override void TakeDamage(int damage)
         {
-            TakeDamage(damage);
+            base.TakeDamage(damage);
 
-            // Lógica específica para este tipo de enemigo
-            if (Type == EnemyType.Warrior)
-            {
-
-                Random rand = new Random();
-                if (rand.Next(1, 5) == 1)
-                {
-                    Attack(this);
-                }
-            }
+           
         }
 
         public override void UseItem(Item item)

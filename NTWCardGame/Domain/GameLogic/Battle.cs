@@ -49,7 +49,7 @@ namespace NTWCardGame.Domain.Battle
                 throw new InvalidOperationException("No es el turno del jugador.");
             }
 
-            Character target = GetCharacterById(targetId);
+            Enemy target = GetCharacterById(targetId);
 
             // Procesa la acción del jugador
             switch (actionType.ToLower())
@@ -93,12 +93,9 @@ namespace NTWCardGame.Domain.Battle
         }
 
         // Recuperar un personaje por ID
-        public Character GetCharacterById(int id)
+        public Enemy GetCharacterById(int id)
         {
-            if (Player.Id == id)
-            {
-                return Player;
-            }
+         
             return Enemies.FirstOrDefault(e => e.Id == id);
         }
 

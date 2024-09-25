@@ -1,11 +1,4 @@
-﻿
-@{
-    ViewData["Title"] = "Battle";
-}
-
-<h1>Battle</h1>
-
-@model NTWCardGame.Domain.Battle.Battle
+﻿@model NTWCardGame.Domain.Battle.Battle
 
 @{
     ViewData["Title"] = "Batalla";
@@ -14,24 +7,27 @@
 <link rel="stylesheet" href="~/css/battle/battle.css" />
 
 <div id="battle-container">
-    <h1>Batalla contra los enemigos</h1>
-
-    <div id="player-info">
-        <h2>Jugador: @Model.Player.Name</h2>
-        <p>Salud: <span id="player-health">@Model.Player.Health</span></p>
-        <p>Mana: <span id="player-mana">@Model.Player.Mana</span></p>
-    </div>
+    <h1 class="battle-title">Batalla contra los enemigos</h1>
 
     <div id="enemy-info">
         <h2>Enemigos</h2>
-        @foreach (var enemy in Model.Enemies)
-        {
-            <div class="enemy" id="enemy-@enemy.Id" data-id="@enemy.Id">
-                <img src="~/images/enemy-avatar.png" alt="Avatar del enemigo" class="enemy-avatar" />
-                <p>Nombre: @enemy.Name</p>
-                <p>Salud: <span class="enemy-health">@enemy.Health</span></p>
-            </div>
-        }
+        <div class="enemy-list">
+            @foreach (var enemy in Model.Enemies)
+            {
+                <div class="enemy-card" id="enemy-@enemy.Id" data-id="@enemy.Id" onclick="selectEnemy(@enemy.Id)">
+                    <img src="~/avatars/@enemy.AvatarImage" alt="Avatar del enemigo" class="enemy-avatar" />
+                    <h3>@enemy.Name</h3>
+                    <p>Salud: <span class="enemy-health">@enemy.Health</span></p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div id="player-info">
+        <img src="~/avatars/@Model.Player.AvatarImage" alt="Avatar del jugador" class="player-avatar" />
+        <h2>Jugador: @Model.Player.Name</h2>
+        <p>Salud: <span id="player-health">@Model.Player.Health</span></p>
+        <p>Mana: <span id="player-mana">@Model.Player.Mana</span></p>
     </div>
 
     <div id="action-panel" style="display:none;">
@@ -49,8 +45,19 @@
 <script>
     let battleData = {
         playerId: '@Model.Player.Id',
-        enemies: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Enemies))
+        enemies: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Enemies)),
+        selectedEnemyId: null // Variable para almacenar el ID del enemigo seleccionado
     };
+
+    // Función para seleccionar un enemigo
+    function selectEnemy(enemyId) {
+        battleData.selectedEnemyId = enemyId; // Guardar el ID del enemigo seleccionado
+        // Resaltar el enemigo seleccionado (opcional)
+        document.querySelectorAll('.enemy-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        document.getElementById(`enemy-${enemyId}`).classList.add('selected'); // Resaltar enemigo seleccionado
+    }
 
     // Función para refrescar la UI después de cada acción
     function updateBattleUI(data) {
@@ -76,8 +83,11 @@
 
     // Inicia una acción de ataque por parte del jugador
     function playerAttack() {
-        let targetId = battleData.enemies[0].id; // Atacamos al primer enemigo por ahora
-        postPlayerAction("attack", targetId);
+        if (!battleData.selectedEnemyId) {
+            alert("Por favor, selecciona un enemigo antes de atacar."); // Mensaje de advertencia si no se selecciona un enemigo
+            return;
+        }
+        postPlayerAction("attack", battleData.selectedEnemyId);
     }
 
     // Envía la acción del jugador al servidor
@@ -92,24 +102,24 @@
                 targetId: targetId
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            updateBattleUI(data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                updateBattleUI(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     }
 
     // Inicialización de la batalla (cargar el turno actual)
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         fetch('/Battle/GetCurrentTurn')
-        .then(response => response.json())
-        .then(data => {
-            updateBattleUI(data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                updateBattleUI(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     });
 </script>

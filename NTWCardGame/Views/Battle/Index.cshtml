@@ -29,6 +29,21 @@
         <p>Salud: <span id="player-health">@Model.Player.Health</span></p>
         <p>Mana: <span id="player-mana">@Model.Player.Mana</span></p>
     </div>
+    <div id="battle-log-container">
+        <h3>Registro de Combate</h3>
+        <ul id="battle-log">
+            @foreach (var logEntry in Model.BattleLog)
+            {
+                <li>Turno @logEntry.Turn: @logEntry.Message</li>
+            }
+        </ul>
+    </div>
+
+    <div id="battle-result" style="display:none;">
+        <h2 id="battle-result-message"></h2>
+        <button id="restart-button" style="display:none;" onclick="restartBattle()">Reiniciar Batalla</button>
+    </div>
+
 
     <div id="action-panel" style="display:none;">
         <h3>Acciones del Jugador</h3>
@@ -61,6 +76,7 @@
 
     // Función para refrescar la UI después de cada acción
     function updateBattleUI(data) {
+
         document.getElementById('player-health').innerText = data.player.health;
         document.getElementById('player-mana').innerText = data.player.mana;
 
@@ -71,14 +87,43 @@
             }
         });
 
-        document.getElementById('current-turn-info').innerText = data.turnInfo.currentCharacter.name;
+        if (data.isBattleOver) {
+            document.getElementById('action-panel').style.display = 'none';
+            document.getElementById('battle-result').style.display = 'block';
 
+            if (data.isVictory) {
+                document.getElementById('battle-result-message').innerText = "¡Victoria! Todos los enemigos han sido derrotados.";
+            } else {
+                document.getElementById('battle-result-message').innerText = "Has sido derrotado. Mejor suerte la próxima vez.";
+            }
+
+            document.getElementById('restart-button').style.display = 'block';
+            return;
+        }
+
+   
+        document.getElementById('current-turn-info').innerText = data.turnInfo.currentCharacter.name;
+    
         // Mostrar panel de acciones solo si es el turno del jugador
         if (data.turnInfo.isPlayerTurn) {
             document.getElementById('action-panel').style.display = 'block';
         } else {
             document.getElementById('action-panel').style.display = 'none';
         }
+
+        // Actualizar el registro de combate
+        let battleLogContainer = document.getElementById('battle-log');
+        battleLogContainer.innerHTML = ''; // Limpiar log anterior
+        data.battleLog.forEach(logEntry => {
+            let logItem = document.createElement('li');
+            logItem.textContent = `Turno ${logEntry.turn}: ${logEntry.message}`;
+            battleLogContainer.appendChild(logItem);
+        });
+    }
+
+    // Reiniciar batalla (puedes implementarlo como desees)
+    function restartBattle() {
+        window.location.href = '/Battle/Index'; // Volver al inicio de la batalla
     }
 
     // Inicia una acción de ataque por parte del jugador

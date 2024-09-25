@@ -22,7 +22,7 @@ namespace NTWCardGame.Domain.Cards.Player
 
 
 
-        public virtual void Attack(Character target, Skill.Skill skill = null)
+        public virtual int Attack(Character target, Skill.Skill skill = null)
         {
             if (skill != null)
             {
@@ -33,7 +33,9 @@ namespace NTWCardGame.Domain.Cards.Player
                 // Lógica básica de ataque
                 var damage = CalculateDamage();
                 target.TakeDamage(damage);
+                return damage;
             }
+            return 0;
         }
 
         protected virtual int CalculateDamage()

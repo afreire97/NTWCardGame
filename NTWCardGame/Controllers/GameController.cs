@@ -33,8 +33,8 @@ namespace NTWCardGame.Controllers
             // Crear los enemigos iniciales para la batalla
             var enemies = new List<Enemy>
             {
-                new Enemy { Id = 1, Name = "Goblin", Health = 50, AttackDmg = 5, AvatarImage="rat.png" },
-                new Enemy { Id = 2, Name = "Orco", Health = 100, AttackDmg = 10, AvatarImage="rat.png" }
+                new Enemy { Id = 1, Name = "Goblin", Health = 50, AttackDmg = 1, AvatarImage="rat.png" },
+                new Enemy { Id = 2, Name = "Orco", Health = 100, AttackDmg = 2, AvatarImage="rat.png" }
             };
 
             // Inicializar la batalla

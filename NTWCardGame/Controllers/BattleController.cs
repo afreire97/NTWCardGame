@@ -63,16 +63,61 @@
                     return BadRequest("No es el turno del jugador.");
                 }
 
-                // Ejecuta la acción del jugador (por ejemplo, un ataque)
+                // Ejecutar acción del jugador
                 battle.ExecutePlayerAction(actionRequest.ActionType, actionRequest.TargetId);
 
-                // Ejecuta los turnos de los enemigos
+                // Verificar si la batalla ha terminado después de la acción del jugador
+                if (battle.IsBattleOver())
+                {
+                    return Ok(new
+                    {
+                        isBattleOver = true,
+                        isVictory = battle.IsVictory(),
+                        battleLog = battle.BattleLog,
+                        player = new
+                        {
+                            health = battle.Player.Health,
+                            mana = battle.Player.Mana
+                        },
+                        enemies = battle.Enemies.Select(e => new
+                        {
+                            id = e.Id,
+                            name = e.Name,
+                            health = e.Health
+                        }),
+                    });
+                }
+
+                // Ejecutar turnos de enemigos solo si la batalla no ha terminado
                 battle.ExecuteEnemyTurns();
 
-                // Guarda el estado actualizado de la batalla
+                // Verificar si la batalla ha terminado después de los turnos de los enemigos
+                if (battle.IsBattleOver())
+                {
+                    return Ok(new
+                    {
+                        isBattleOver = true,
+                        isVictory = battle.IsVictory(),
+                        battleLog = battle.BattleLog,
+                        player = new
+                        {
+                            health = battle.Player.Health,
+                            mana = battle.Player.Mana
+                        },
+                        enemies = battle.Enemies.Select(e => new
+                        {
+                            id = e.Id,
+                            name = e.Name,
+                            health = e.Health
+                        }),
+                    }
+                    );
+                }
+
+                // Guardar el estado actualizado de la batalla
                 HttpContext.Session.SetObject("CurrentBattle", battle);
 
-                // Retorna el estado actualizado de la batalla
+                // Retornar el estado actualizado
                 return Ok(new
                 {
                     player = new
@@ -86,17 +131,20 @@
                         name = e.Name,
                         health = e.Health
                     }),
-                    turnInfo = battle.GetCurrentTurnInfo()
+                    turnInfo = battle.GetCurrentTurnInfo(),
+                    battleLog = battle.BattleLog,
+                    isBattleOver = false // La batalla continúa
                 });
+            }
+
+
+            // Clase para representar la solicitud de acción del jugador
+            public class PlayerActionRequest
+            {
+                public string ActionType { get; set; }
+                public int TargetId { get; set; }
             }
         }
 
-        // Clase para representar la solicitud de acción del jugador
-        public class PlayerActionRequest
-        {
-            public string ActionType { get; set; }
-            public int TargetId { get; set; }
-        }
     }
-
 }

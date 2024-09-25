@@ -10,6 +10,8 @@ namespace NTWCardGame.Domain.Battle
         public List<Enemy> Enemies { get; private set; }
         private int currentTurnIndex;
         private List<Character> turnOrder;
+        public List<BattleLogEntry> BattleLog { get; private set; } // Agregar log de batalla
+
 
         public Battle(Player player, List<Enemy> enemies)
         {
@@ -20,6 +22,8 @@ namespace NTWCardGame.Domain.Battle
             // Inicializa el orden de los turnos (jugador primero, luego enemigos)
             turnOrder = new List<Character> { player };
             turnOrder.AddRange(enemies);
+            BattleLog = new List<BattleLogEntry>(); // Inicializa el log
+
         }
 
         // Devuelve la información del turno actual
@@ -50,12 +54,14 @@ namespace NTWCardGame.Domain.Battle
             }
 
             Enemy target = GetCharacterById(targetId);
+            int damage = 0;
 
             // Procesa la acción del jugador
             switch (actionType.ToLower())
             {
                 case "attack":
-                    Player.Attack(target);
+                    damage = Player.Attack(target);
+                    AddLogEntry($"El jugador atacó a {target.Name} y causó {damage} puntos de daño.");
                     break;
                 // Agregar otros casos para habilidades o uso de objetos
                 default:
@@ -68,16 +74,26 @@ namespace NTWCardGame.Domain.Battle
         // Ejecuta los turnos de los enemigos
         public void ExecuteEnemyTurns()
         {
+            int damage = 0;
             while (!IsPlayerTurn())
             {
                 var currentEnemy = turnOrder[currentTurnIndex] as Enemy;
                 if (currentEnemy != null && currentEnemy.Health > 0)
                 {
                     // Los enemigos atacan al jugador en su turno
-                    currentEnemy.Attack(Player);
+                     damage = currentEnemy.Attack(Player);
+                    AddLogEntry($"{currentEnemy.Name} atacó al jugador y causó {damage} puntos de daño.");
                 }
                 AdvanceTurn();
             }
+        }
+        private void AddLogEntry(string message)
+        {
+            BattleLog.Add(new BattleLogEntry
+            {
+                Turn = currentTurnIndex + 1, // Turnos empiezan desde 1
+                Message = message
+            });
         }
 
         // Avanzar el turno al siguiente personaje
@@ -89,6 +105,11 @@ namespace NTWCardGame.Domain.Battle
             if (Enemies.All(e => e.Health <= 0))
             {
                 EndBattle();
+            }
+            if (Player.Health <= 0)
+            {
+                EndBattle();
+
             }
         }
 
@@ -105,6 +126,23 @@ namespace NTWCardGame.Domain.Battle
             // Implementar lógica para terminar la batalla, como recompensas, experiencia, etc.
             Console.WriteLine("¡La batalla ha terminado!");
         }
+
+        public bool IsBattleOver()
+        {
+            return IsVictory() || IsDefeat();
+        }
+
+        public bool IsVictory()
+        {
+            // Victoria si todos los enemigos han sido derrotados
+            return Enemies.All(enemy => enemy.Health <= 0);
+        }
+
+        public bool IsDefeat()
+        {
+            // Derrota si el jugador ha sido derrotado
+            return Player.Health <= 0;
+        }
     }
 
     // Clase para representar la información del turno actual
@@ -114,5 +152,10 @@ namespace NTWCardGame.Domain.Battle
         public bool IsPlayerTurn { get; set; }
         public Player Player { get; set; }
         public List<Enemy> Enemies { get; set; }
+    }
+    public class BattleLogEntry
+    {
+        public int Turn { get; set; }
+        public string Message { get; set; }
     }
 }
